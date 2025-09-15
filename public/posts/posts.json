@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "gemini-cli-supercharge-development",
+    "title": "第三課：釋放 Gemini CLI 的潛能，讓你的程式開發效率翻倍！",
+    "excerpt": "AI Vibe Coding 系列第三課，學習如何將 Gemini CLI 整合到你的開發流程中，實現前所未有的程式撰寫速度。",
+    "cover": "./assets/gemini-cli-supercharge-development.png",
+    "date": "2025-09-15",
+    "tags": ["gemini-cli", "ai", "workflow"]
+  },
+  {
+    "slug": "pm-superpowers-vibe-coding",
+    "title": "第二課：PM 的 AI 超能力，用 Vibe Coding 串連工作流",
+    "excerpt": "AI vibe coding 第二堂課，學會如何把 PM 工具流程化，快速產出藍圖、簡報與決策支持。",
+    "cover": "./assets/pm-superpowers-vibe-coding.png",
+    "date": "2025-09-14",
+    "tags": ["pm", "mermaid", "ai"]
+  },
+  {
+    "slug": "vibe-coding-one-page",
+    "title": "第一課：從零開始，用 Vibe Coding 打造一站式個人網頁",
+    "excerpt": "AI vibe coding 第一堂課，學習如何用 HTML + Tailwind 從零打造屬於自己的個人空間。",
+    "cover": "./assets/vibe-coding-one-page.png",
+    "date": "2025-09-14",
+    "tags": ["vibe-coding", "html", "tailwind"]
+  }
+]

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jimmy’s Space</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-white text-gray-900 font-sans overflow-x-hidden">
+  <!-- Header 導覽列 -->
+  <header class="relative flex items-center justify-between px-4 py-4 shadow-sm md:px-8">
+    <div class="text-center md:text-left">
+      <a href="./index.html" class="text-xl font-bold">Jimmy’s Space</a>
+      <p class="text-xs font-bold text-pink-500 mt-0.5">AI 時代的適應者、學習者與實驗者</p>
+    </div>
+
+    <!-- 漢堡按鈕 (手機版) -->
+    <div class="md:hidden">
+      <button id="menu-toggle" class="text-gray-900 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 導覽列 (電腦版) -->
+    <nav class="hidden md:flex items-center space-x-6 font-semibold">
+      <a href="./index.html" class="hover:text-gray-600">Home</a>
+      <a href="#" class="hover:text-gray-600">Menu</a>
+      <a href="#" class="hover:text-gray-600">Category</a>
+      <a href="#" class="hover:text-gray-600">Sign In</a>
+      <a href="#" class="px-4 py-2 rounded-full bg-pink-500 text-white hover:bg-pink-600">Subscribe</a>
+    </nav>
+
+    <!-- 彈出式選單 (手機版) -->
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white shadow-md md:hidden">
+      <nav class="flex flex-col items-center space-y-4 py-4 font-semibold">
+        <a href="./index.html" class="hover:text-gray-600">Home</a>
+        <a href="#" class="hover:text-gray-600">Menu</a>
+        <a href="#" class="hover:text-gray-600">Category</a>
+        <a href="#" class="hover:text-gray-600">Sign In</a>
+        <a href="#" class="px-4 py-2 rounded-full bg-pink-500 text-white hover:bg-pink-600">Subscribe</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 卡片文章區塊 -->
+  <section class="px-4 md:px-8 pb-20">
+    <div id="card-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 text-center text-gray-500 text-sm border-t">
+    © 2025 Jimmy’s Space. All rights reserved.
+  </footer>
+
+  <!-- 載入 JS -->
+  <script src="/common.js"></script>
+  <script src="/main.js"></script>
+</body>
+</html>
