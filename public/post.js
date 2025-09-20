@@ -20,10 +20,27 @@ async function loadPostPage() {
 
     // 設定標題與封面
     document.getElementById('title').innerText = meta.title;
-    const cover = document.getElementById('cover');
-    if (cover) {
-      cover.src = meta.cover;
-      cover.alt = meta.title;
+    const coverContainer = document.getElementById('cover-container');
+
+    if (coverContainer && meta.cover) {
+      if (meta.cover.includes('youtube.com')) {
+        const videoId = new URL(meta.cover).searchParams.get('v');
+        if (videoId) {
+          const iframe = document.createElement('iframe');
+          iframe.src = `https://www.youtube.com/embed/${videoId}`;
+          iframe.className = 'w-full h-full';
+          iframe.frameBorder = '0';
+          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+          iframe.allowFullscreen = true;
+          coverContainer.appendChild(iframe);
+        }
+      } else {
+        const img = document.createElement('img');
+        img.src = meta.cover;
+        img.alt = meta.title;
+        img.className = 'w-full h-full object-contain bg-white';
+        coverContainer.appendChild(img);
+      }
     }
 
     // 載入對應的 markdown 文章
