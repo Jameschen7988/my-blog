@@ -110,18 +110,51 @@ async function loadPostPage() {
       md = md.replace(summaryRegex, "");
     }
 
-    // === Step 2: 自動轉換「人名: 對話」整段 ===
-    const speakerBlockPattern =
-      /(Aaron Levie|主持人|Orion|Charlie|Gary)([\s\S]*?)(?=\n(?:Aaron Levie|主持人|Orion|Charlie|Gary)|$)/g;
+    // === Step 2: 自動轉換「說話者」段落 ===
+    const lines = md.split('\n');
+    let processed = '';
+    let currentSpeaker = null;
+    let buffer = [];
 
-    md = md.replace(speakerBlockPattern, (match, speaker, text) => {
-      const paragraphs = text
-        .trim()
-        .split(/\n\s*\n/)
-        .map(p => `<p>${p.trim()}</p>`)
-        .join("\n");
-      return `\n<h3>${speaker}:</h3>\n<blockquote>\n${paragraphs}\n</blockquote>\n`;
-    });
+    const isSpeakerLine = line => {
+      const trimmed = line.trim();
+      if (!trimmed) return false;
+      if (trimmed.startsWith('#') || trimmed.startsWith('- ') || trimmed.startsWith('* ') || trimmed.startsWith('> ')) return false;
+      if (trimmed.length > 60) return false;
+      if (/[。！？；，,.]/.test(trimmed)) return false;
+      return true;
+    };
+
+    const flush = () => {
+      if (currentSpeaker) {
+        const content = buffer.join('\n').trim();
+        const paragraphs = content
+          ? content
+              .split(/\n\s*\n/)
+              .map(p => `<p>${p.trim()}</p>`)
+              .join('\n')
+          : '';
+        processed += `\n<h3>${currentSpeaker}</h3>\n`;
+        processed += paragraphs ? `<blockquote>\n${paragraphs}\n</blockquote>\n` : '<blockquote></blockquote>\n';
+      } else if (buffer.length) {
+        processed += buffer.join('\n');
+        processed += '\n';
+      }
+      currentSpeaker = null;
+      buffer = [];
+    };
+
+    for (const line of lines) {
+      if (isSpeakerLine(line)) {
+        flush();
+        currentSpeaker = line.trim();
+      } else {
+        buffer.push(line);
+      }
+    }
+    flush();
+
+    md = processed.trim();
 
     // === Step 3: 組合輸出 ===
     content.innerHTML = summaryHTML + marked.parse(md);
