@@ -1,3 +1,38 @@
+function initMobileNavigation() {
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (!menuToggle || !mobileMenu) return;
+
+  const closeMenu = () => {
+    if (mobileMenu.classList.contains('hidden')) return;
+    mobileMenu.classList.add('hidden');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  };
+
+  const toggleMenu = event => {
+    event?.stopPropagation();
+    const isHidden = mobileMenu.classList.toggle('hidden');
+    menuToggle.setAttribute('aria-expanded', String(!isHidden));
+  };
+
+  menuToggle.type = 'button';
+  menuToggle.setAttribute('aria-controls', 'mobile-menu');
+  menuToggle.setAttribute('aria-expanded', 'false');
+
+  menuToggle.addEventListener('click', toggleMenu);
+  mobileMenu.addEventListener('click', event => event.stopPropagation());
+
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  document.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeMenu();
+  });
+}
+
 async function loadPostPage() {
   const content = document.getElementById('content');
   if (!content) return;
@@ -30,7 +65,8 @@ async function loadPostPage() {
           iframe.src = `https://www.youtube.com/embed/${videoId}`;
           iframe.className = 'w-full h-full';
           iframe.frameBorder = '0';
-          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+          iframe.allow =
+            'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
           iframe.allowFullscreen = true;
           coverContainer.appendChild(iframe);
         }
@@ -44,8 +80,52 @@ async function loadPostPage() {
     }
 
     // 載入對應的 markdown 文章
-    const md = await fetch(`/posts/${slug}.md`).then(r => r.text());
-    content.innerHTML = marked.parse(md);
+    let md = await fetch(`/posts/${slug}.md`).then(r => r.text());
+
+    // === Step 1: 抽出摘要區塊 ===
+    const summaryRegex = /<!-- summary -->([\s\S]*?)<!-- endsummary -->/;
+    const match = md.match(summaryRegex);
+    let summaryHTML = "";
+    if (match) {
+      const rawSummary = match[1].trim();
+
+      // 把每行拆成 <li>
+      const summaryPoints = rawSummary
+        .split(/\n+/)
+        .filter(line => line.trim())
+        .map(line => `<li>${line.replace(/^[-*]\s*/, "").trim()}</li>`)
+        .join("");
+
+      summaryHTML = `
+  <div class="prose bg-pink-50 p-4 rounded-lg border-l-4 border-pink-400 mb-8 prose-headings:mt-0 prose-p:mt-2">
+    <h2 class="text-xl font-bold text-pink-600 mb-3">重點摘要</h2>
+    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+      ${summaryPoints}
+    </ul>
+  </div>
+`;
+
+
+      // 移除原始 summary
+      md = md.replace(summaryRegex, "");
+    }
+
+    // === Step 2: 自動轉換「人名: 對話」整段 ===
+    const speakerBlockPattern =
+      /(Aaron Levie|主持人|Orion|Charlie|Gary)([\s\S]*?)(?=\n(?:Aaron Levie|主持人|Orion|Charlie|Gary)|$)/g;
+
+    md = md.replace(speakerBlockPattern, (match, speaker, text) => {
+      const paragraphs = text
+        .trim()
+        .split(/\n\s*\n/)
+        .map(p => `<p>${p.trim()}</p>`)
+        .join("\n");
+      return `\n<h3>${speaker}:</h3>\n<blockquote>\n${paragraphs}\n</blockquote>\n`;
+    });
+
+    // === Step 3: 組合輸出 ===
+    content.innerHTML = summaryHTML + marked.parse(md);
+
   } catch (err) {
     document.getElementById('title').innerText = '載入文章失敗';
     console.error("讀取文章時出錯:", err);
@@ -54,6 +134,6 @@ async function loadPostPage() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initMobileNavigation();
   loadPostPage();
 });
-

@@ -5,6 +5,178 @@
     "excerpt": "AI Startup School 系列，聽 Y Combinator 的 Aaron Levie 分享為什麼新創公司在 AI 時代具備獨特優勢。",
     "cover": "https://www.youtube.com/watch?v=uqc_vt95GJg",
     "date": "2025-09-20",
-    "tags": ["AI Startup School", "Y Combinator", "Aaron Levie"]
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Aaron Levie"
+    ]
+  },
+  {
+    "slug": "the-future-of-software-creation-with-replit-ceo-amjad-masad",
+    "title": "YC AI Startup School: The Future of Software Creation with Replit CEO Amjad Masad",
+    "excerpt": "AI Startup School 系列，紀錄 The Future of Software Creation with Replit CEO Amjad Masad 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=lWmDiDGsLK4",
+    "date": "2025-09-21",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Amjad Masad"
+    ]
+  },
+  {
+    "slug": "michael-truell-building-cursor-at-23-taking-on-github-copilot-advice-to-engineering-students",
+    "title": "YC AI Startup School: Michael Truell: Building Cursor At 23, Taking On GitHub Copilot & Advice To Engineering Students",
+    "excerpt": "AI Startup School 系列，紀錄 Michael Truell: Building Cursor At 23, Taking On GitHub Copilot & Advice To Engineering Students 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=TrXi3naD6Og",
+    "date": "2025-09-22",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Michael Truell"
+    ]
+  },
+  {
+    "slug": "dylan-field-scaling-figma-and-the-future-of-design",
+    "title": "YC AI Startup School: Dylan Field: Scaling Figma and the Future of Design",
+    "excerpt": "AI Startup School 系列，紀錄 Dylan Field: Scaling Figma and the Future of Design 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=-7Qz7tSTfUU",
+    "date": "2025-09-23",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Dylan Field"
+    ]
+  },
+  {
+    "slug": "scaling-and-the-road-to-human-level-ai-anthropic-co-founder-jared-kaplan",
+    "title": "YC AI Startup School: Scaling and the Road to Human-Level AI | Anthropic Co-founder Jared Kaplan",
+    "excerpt": "AI Startup School 系列，紀錄 Scaling and the Road to Human-Level AI | Anthropic Co-founder Jared Kaplan 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=p8Jx4qvDoSo",
+    "date": "2025-09-24",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Jared Kaplan"
+    ]
+  },
+  {
+    "slug": "chelsea-finn-building-robots-that-can-do-anything",
+    "title": "YC AI Startup School: Chelsea Finn: Building Robots That Can Do Anything",
+    "excerpt": "AI Startup School 系列，紀錄 Chelsea Finn: Building Robots That Can Do Anything 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=a8-QsBHoH94",
+    "date": "2025-09-25",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Chelsea Finn"
+    ]
+  },
+  {
+    "slug": "nobel-laureate-john-jumper-ai-is-revolutionizing-scientific-discovery",
+    "title": "YC AI Startup School: Nobel Laureate John Jumper: AI is Revolutionizing Scientific Discovery",
+    "excerpt": "AI Startup School 系列，紀錄 Nobel Laureate John Jumper: AI is Revolutionizing Scientific Discovery 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=2Yguz5U-Nic",
+    "date": "2025-09-26",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "John Jumper"
+    ]
+  },
+  {
+    "slug": "aravind-srinivas-perplexity-s-race-to-build-agentic-search",
+    "title": "YC AI Startup School: Aravind Srinivas: Perplexity's Race to Build Agentic Search",
+    "excerpt": "AI Startup School 系列，紀錄 Aravind Srinivas: Perplexity's Race to Build Agentic Search 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=2jOnoTEk-xA",
+    "date": "2025-09-27",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Aravind Srinivas"
+    ]
+  },
+  {
+    "slug": "andrew-ng-building-faster-with-ai",
+    "title": "YC AI Startup School: Andrew Ng: Building Faster with AI",
+    "excerpt": "AI Startup School 系列，紀錄 Andrew Ng: Building Faster with AI 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=RNJCfif1dPY",
+    "date": "2025-09-28",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Andrew Ng"
+    ]
+  },
+  {
+    "slug": "francois-chollet-how-we-get-to-agi",
+    "title": "YC AI Startup School: François Chollet: How We Get To AGI",
+    "excerpt": "AI Startup School 系列，紀錄 François Chollet: How We Get To AGI 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=5QcCeSsNRks",
+    "date": "2025-09-29",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "François Chollet"
+    ]
+  },
+  {
+    "slug": "fei-fei-li-spatial-intelligence-is-the-next-frontier-in-ai",
+    "title": "YC AI Startup School: Fei-Fei Li: Spatial Intelligence is the Next Frontier in AI",
+    "excerpt": "AI Startup School 系列，紀錄 Fei-Fei Li: Spatial Intelligence is the Next Frontier in AI 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=_PioN-CpOP0",
+    "date": "2025-09-30",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Fei-Fei Li"
+    ]
+  },
+  {
+    "slug": "satya-nadella-microsoft-s-ai-bets-hyperscaling-quantum-computing-breakthroughs",
+    "title": "YC AI Startup School: Satya Nadella: Microsoft's AI Bets, Hyperscaling, Quantum Computing Breakthroughs",
+    "excerpt": "AI Startup School 系列，紀錄 Satya Nadella: Microsoft's AI Bets, Hyperscaling, Quantum Computing Breakthroughs 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=AUUZuzVHKdo",
+    "date": "2025-10-01",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Satya Nadella"
+    ]
+  },
+  {
+    "slug": "sam-altman-the-future-of-openai-chatgpt-s-origins-and-building-ai-hardware",
+    "title": "YC AI Startup School: Sam Altman: The Future of OpenAI, ChatGPT's Origins, and Building AI Hardware",
+    "excerpt": "AI Startup School 系列，紀錄 Sam Altman: The Future of OpenAI, ChatGPT's Origins, and Building AI Hardware 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=V979Wd1gmTU",
+    "date": "2025-10-02",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Sam Altman"
+    ]
+  },
+  {
+    "slug": "elon-musk-digital-superintelligence-multiplanetary-life-how-to-be-useful",
+    "title": "YC AI Startup School: Elon Musk: Digital Superintelligence, Multiplanetary Life, How to Be Useful",
+    "excerpt": "AI Startup School 系列，紀錄 Elon Musk: Digital Superintelligence, Multiplanetary Life, How to Be Useful 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=cFIlta1GkiE",
+    "date": "2025-10-03",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Elon Musk"
+    ]
+  },
+  {
+    "slug": "andrej-karpathy-software-is-changing-again",
+    "title": "YC AI Startup School: Andrej Karpathy: Software Is Changing (Again)",
+    "excerpt": "AI Startup School 系列，紀錄 Andrej Karpathy: Software Is Changing (Again) 的重點與心得。",
+    "cover": "https://www.youtube.com/watch?v=LCEmiRjPEtQ",
+    "date": "2025-10-04",
+    "tags": [
+      "AI Startup School",
+      "Y Combinator",
+      "Andrej Karpathy"
+    ]
   }
 ]
