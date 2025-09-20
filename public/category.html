@@ -1,36 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Jimmy’s Space – 文章</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jimmy’s Space – Category</title>
+  <link rel="stylesheet" href="/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <style>
-    #content h2 {
-      font-size: 1.5em;
-      font-weight: bold;
-      margin-top: 2em;
-      margin-bottom: 1em;
-      border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 0.5em;
-    }
-    #content h3 {
-      margin-top: 2em;
-      margin-bottom: 0.5em;
-      font-size: 1.25em;
-      font-weight: bold;
-    }
-    #content blockquote {
-      margin-left: 0;
-      padding-left: 1em;
-      border-left: 4px solid #f472b6;
-      color: #374151;
-    }
-    #content blockquote p {
-      margin-bottom: 0.5em;
-    }
-  </style>
 </head>
 
 <body class="bg-white text-gray-900 font-sans overflow-x-hidden">
@@ -75,19 +50,15 @@
     </div>
   </header>
 
-  <!-- 文章內容 -->
   <main class="max-w-3xl mx-auto px-6 py-10">
-    <h1 id="title" class="text-3xl font-bold mb-4"></h1>
-    <div id="cover-container" class="w-full mb-6 aspect-video"></div>
-    <article id="content" class="prose max-w-none break-words"></article>
+    <h1 class="text-3xl font-bold mb-8">Category</h1>
+    <div id="category-sections" class="space-y-10"></div>
   </main>
 
-  <!-- Footer -->
   <footer class="py-8 text-center text-gray-500 text-sm border-t">
     © 2025 Jimmy’s Space. All rights reserved.
   </footer>
 
-  <!-- 載入 JS -->
-  <script src="/post.js"></script>
+  <script src="/category.js"></script>
 </body>
 </html>
