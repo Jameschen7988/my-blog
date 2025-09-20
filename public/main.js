@@ -8,16 +8,24 @@ async function loadHomePage() {
 
   try {
     const posts = await fetch('/posts/posts.json').then(r => r.json());
-    grid.innerHTML = posts.map(p => `
+    grid.innerHTML = posts.map(p => {
+      let coverUrl = p.cover;
+      if (p.cover.includes('youtube.com')) {
+        const videoId = new URL(p.cover).searchParams.get('v');
+        if (videoId) {
+          coverUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+        }
+      }
+      return `
       <article class="overflow-hidden border border-gray-200 rounded-lg shadow hover:shadow-lg">
-        <img src="${p.cover}" alt="${p.title}" class="w-full bg-white">
+        <img src="${coverUrl}" alt="${p.title}" class="w-full bg-white">
         <div class="p-6">
           <h3 class="text-xl font-bold mb-2">${p.title}</h3>
           <p class="text-gray-700 mb-4 text-sm">${p.excerpt}</p>
           <a href="/post.html?slug=${p.slug}" class="text-sm font-semibold hover:underline">Read More</a>
         </div>
       </article>
-    `).join('');
+    `}).join('');
   } catch (err) {
     console.error("載入文章失敗:", err);
     grid.innerHTML = `<p class="text-red-500">無法載入文章</p>`;
