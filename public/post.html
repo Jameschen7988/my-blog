@@ -35,7 +35,7 @@
 
 <body class="bg-white text-gray-900 font-sans overflow-x-hidden">
   <!-- Header 導覽列 -->
-  <header class="relative flex items-center justify-between px-4 py-4 shadow-sm md:px-8">
+  <header class="relative z-20 flex items-center justify-between px-4 py-4 shadow-sm md:px-8">
     <div class="text-center md:text-left">
       <a href="./index.html" class="text-xl font-bold">Jimmy’s Space</a>
       <p class="text-xs font-bold text-pink-500 mt-0.5">AI 時代的適應者、學習者與實驗者</p>
@@ -66,7 +66,7 @@
     </nav>
 
     <!-- 彈出式選單 (手機版) -->
-    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white shadow-md md:hidden">
+    <div id="mobile-menu" class="hidden absolute top-full left-0 z-10 w-full bg-white shadow-md md:hidden">
       <nav class="flex flex-col items-center space-y-4 py-4 font-semibold">
         <a href="./index.html" class="hover:text-gray-600">Home</a>
         <a href="#" class="hover:text-gray-600">Category</a>
@@ -92,4 +92,3 @@
   <script src="/post.js"></script>
 </body>
 </html>
-

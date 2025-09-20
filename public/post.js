@@ -11,7 +11,7 @@ function initMobileNavigation() {
   };
 
   const toggleMenu = event => {
-    event?.stopPropagation();
+    if (event) event.stopPropagation();
     const isHidden = mobileMenu.classList.toggle('hidden');
     menuToggle.setAttribute('aria-expanded', String(!isHidden));
   };
