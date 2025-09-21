@@ -1,8 +1,298 @@
 <!-- summary -->
-- 這支影片的重點摘要待補充。
+- **超越擴展定律**：François Chollet 指出，AI 領域一度痴迷於「擴展定律」，認為只要不斷將更多數據塞入更大的模型，通用智慧就會自然湧現。然而，他在 2019 年發布的 ARC 基準測試證明，僅靠擴展無法解決需要「流體智慧」（fluid general intelligence）——即即時理解新事物的能力——的問題。
+- **測試時適應（Test-Time Adaptation）**：2024 年，AI 研究的範式轉向了「測試時適應」，即模型在推論時能動態改變自身狀態以適應新情況。這包括測試時訓練、程式合成等技術，並首次在 ARC 上取得了突破。
+- **智慧的真正定義**：他認為，智慧不是儲存的「技能」，而是處理新情況的「過程」。將 AI 的目標定義為「完成人類任務」只會帶來自動化；而將其定義為「處理從未準備過的問題」才能帶來發明和科學加速。智慧是將過去經驗轉化為應對未來新情況的效率。
+- **兩種抽象**：他提出了認知中的兩種抽象類型：第一類（價值中心）是連續的，類似於感知和直覺，深度學習模型擅長此道；第二類（程式中心）是離散的，類似於推理和程式重構，這需要離散的程式搜尋（discrete program search）。
+- **通往 AGI 的架構**：他認為真正的 AGI 需要將這兩種抽象結合起來。他正在 NDI 實驗室建立一個「程式設計師般的元學習器」，該系統能面對新任務時，在一個龐大的、不斷演進的抽象庫中，利用深度學習引導的直覺進行離散程式搜尋，從而即時組合出解決問題的新模型。最終目標是創造能夠獨立發明和發現、擴展知識邊界的 AI。
 <!-- endsummary -->
 
 <small>原始影片：[https://www.youtube.com/watch?v=5QcCeSsNRks](https://www.youtube.com/watch?v=5QcCeSsNRks)</small>
 
-### François Chollet <small>[00:03]</small>
-Hi everyone, I'm Francois. I'm super excited to share with you some of my ideas about HGI and how we're going to get there. This chart right there is one of the most important facts about the world. The cost of compute has been consistently falling by two orders of magnitude every decade since 1940. There's no sign that is stopping anytime soon. And in AI, compute and data have long been the primary bottleneck to what we could achieve. And in 2010s, as you all know, with the abundance of GPU based compute and large data sets, deep learning really started to work. And all of a sudden, we are making fast progress on problems that had long seemed intractable across computer vision and natural language processing. And in particular, self-supervised text modeling started to work. And the dominant paradigm of AI became scaling up LM3 training. And this approach was crushing almost all benchmarks and remarkably it was getting predictably better benchmark results as we scaled up model size and train data size with the exact same architecture and the exact same training process. That's the scaling laws that Jared told you about a few minutes ago. So it really seemed like really it all figured out and many people extrapolated that more scale uh was all that was needed to solve everything and get to a GI. Our field became obsessed with the idea that general intelligence would spontaneously emerge by cramming more and more data into bigger and bigger models. But there was one problem. We were confused about what these benchmarks really meant. There's a big difference between memorized skills which are static and task specific and fluid general intelligence the ability to understand something you've never seen before on the fly. And back in 2019 before the rise of LLMs I released an AI benchmark to highlight this difference. Uh it's called the abstraction reasoning corpus or ark1. And from uh at that time back in 2019 to now with a model like GP4.5 for instance there's been a roughly 50,000x scale up of basel and we went from 0% accuracy on that benchmark to roughly 10%. Which is not a lot. It's very close to zero if you take into account the fact that any one of you in this room would score well above 95%. So to crack general fluid intelligence, it turns out we needed new ideas beyond just scaling up pre-training and doing static inference. This benchmark was not about uh regurgitating memorized skills. It was really about making sense of a new problem that you've never seen before on the fly. But then last year in 2024, everything changed. the AI research community started pivoting to a new and very different pattern test adaptation creating models that could change their own state at test time to adapt to something new. So this wasn't about quering pre-loaded knowledge anymore. It was really about the ability to learn and adapt at inference time and suddenly we started seeing significant progress on ARC. So finally we had AI that was showing genuine signs of fluid intelligence. So in particular in December last year, OpenAI previewed its uh 03 model and they used a version of it that was uh fine-tuned specifically on ARC and that showed human level performance on that benchmark to the first time and today in 2025 we have suddenly moved on from the pre-training scaling pattern and we're now fully in the era of Tesla adaptation. So Tesla adaptation is all about the ability of a model to modify its own behavior dynamically based on the specific data it encounters during inference. So that covers techniques like test time training, program synthesis, train of thought synthesis where the model tries to reprogram itself uh for the task at hand. And today every single AI approach that performs well on ARC is using one of these techniques. So today I want to answer the following questions. First, why did the pre-training scaling paradigm not get us to a GI? If you look back just two years ago, this was the standard dogma. Everybody was saying this and today almost no one believes this anymore. So what happened? And next, does this adaptation get us to AGI this time? And if that's the case, maybe AGI is already here. Some people believe so. And finally, besides uh the sign adaptation, what else might be next for AI? And to answer these questions, we have to go back to a more fundamental question. What is even intelligence? What what do we mean when we say we're trying to build AGI? If you look back over the past decades, there's been two lines of thoughts to define intelligence and to define the goals of AI. There's the Minsky style view. Uh AI is about making machines that are capable of performing tasks uh that would normally be done by humans. And this echoes very closely uh the current mainstream corporate view that AGI would be uh a model that could perform most economically valuable tasks like 80% is often quoted as as the number. But then there's the mac view that AI is about getting machines to handle problems they have not been prepared for. It's about getting AI to deal with something new. And my view is more like the MATI view. Intelligence is a process and skill is the output of that process. So skill itself is not intelligence and displaying skill at any number of tasks does not show intelligence. This is like the difference between a road network and a road building company. If you have a road network, then you can go from A to B for a specific predefined set of A's and B's. But if you have a road building company, then you can start connecting new A's, new B's on the fly as your needs evolve. So intelligence is the ability to deal with new situations. It's the ability to blaze fresh trails and build new roads. So attributing intelligence towards really a crystallized behavior program, a skill program, that's a category error. You are confusing the process and its output. So don't confuse the road and the process that created the road. So to formalize this a bit, I see intelligence as the conversion ratio between the information you have uh mostly your past experience but also any uh developer imparted prior that the system might have and your operational area over the space of potential future situations that you might encounter and that's going to feature high novelty and uncertainty. So intelligence is the efficiency with which you operationalize past information in order to deal with the future. It's an efficiency ratio and that's the reason why using exam like benchmarks models is a bad idea. They're not going to tell you how close we are to AGI because human exams weren't designed to measure intelligence. They were designed to measure task specific skill and knowledge. They were designed according to assumptions that are sensible for humans but not for machines. Like for instance, most exams assume that you haven't read and memorized all the exam questions and the answers beforehand. So if you want to regly define and measure intelligence, here are some key concepts that you have to take into account. The first is the distinction between static skills and fluid intelligence. So between having access to a collection uh of static programs to solve known problems versus being able to synthesize brand new programs on the fly to face a problem you never seen before. And of course it's not a binary. It's not one or the other. There's a spectrum between the two. The second concept is operational area for a given skill. There's a big difference between being skilled only in situations that are very close to what you've seen before and uh being skilled for any situation within a very broad scope. For instance, if you know how to drive, you should be able to drive in any city, not just uh in a specific geopence area. Like you can learn to drive in San Jose and then move to Sacramento and you can still drive, right? Again, so it's there's a spectrum there. It's not it's not binary. And lastly, you should look at uh information efficiency for a given skill. How much information, how much data, how much practice did you need to acquire that skill? And of course, higher information efficiency means higher intelligence. And the reason these definitions matter a lot is that as engineers, we can only build what we measure. So the way we define and measure intelligence is not a technical detail. It really reflects our understanding of the problem of cognition. It scopes out the the questions we're going to be asking and so it determines the answers that we're going to be getting. It's the feedback signal that drives us towards our goals. And a phenomenon you see constantly in engineering is the shortcut rule. So it's it's the fact that when you focus on uh achieving a single measure of success, you may succeed but you will do that at the expense of everything else that was not captured by your measure. So you hit the target but you miss the points and you see this all the time uh on Kaggle for instance. Uh we saw it with the Netflix prize where the winning system was extremely accurate but it was way too complex to ever be used in production. So it ended up never being used. It was effectively pointless. Uh we also saw it in AI uh with chess playing for AI. The reason the AI community set out to create uh programs that could play chess back in the 70s was because uh people expected this would teach us about human intelligence. And then a couple decades later, we achieved a goal when Deep Blue beat Kasparov, the world champion. And in the process we had really learned nothing about intelligence. So you hit the targets but you miss the points. And for decades AI has chased task specific skill because that was our definition of intelligence. But this definition only leads to automation which is exactly the kind of system that we have today. But we actually want AI that's capable of autonomous invention. We don't want to stop at automating known tasks. We want AI that could tackle humanity's most difficult challenges and accelerate scientific progress. That's what AGI is meant to be. And to achieve that, we need a new target. We need to stop targeting fluid intelligence itself, the ability to adapt and invent. So one definition of AGI only enops automation. So it increases economic productivity. Obviously, it's extremely valuable. Maybe it also increases unemployment. But the other definition unlocks invention and the acceleration of the timeline of science. And it's by measuring what you really care about that we'll be able to make progress. So we need a better target. We need a better feedback signal. What does that look like? My first attempt at creating a way to measure intelligence in AI systems was the RKGI benchmark. So I released ARK1 back in uh 2019. It's like an IQ test for machines and also humans. So ARK1 contains 1,000 tasks like this one here. And each task is unique. So that means that you cannot cram for ARC. You have to figure out each task on the fly by using your general intelligence rather than your memorized knowledge. And of course solving any problem always requires some knowledge. And in the case of most benchmarks, the knowledge prior that you need are typically left implicit. In the case of ARC, we made them explicit. So all ARC tasks are built entirely on top of core knowledge prior which are things like objectness, uh elementary physics, um basic geometry, topology, counting. So concepts that any fouryear-old child has already mastered. And solving arc requires very little knowledge and it's knowledge that is very much not specialized. So you don't need to prepare for arc in order to solve it. And what makes arc unique is that you cannot solve it purely by memorizing patterns. It really requires you to demonstrate through the intelligence. And meanwhile pretty pretty much every other benchmark out there is targeting fixed known tasks. So they can't actually be solved or hacked via memorization alone. That's what makes ARC fairly easy for humans but very challenging for AI. And when you see a problem like this where a human child can perform really well but the most advanced the most sophisticated AI models out there struggle that's like a big red flashing light telling you that we're missing something that new ideas are needed. One thing I want you to keep in mind is that ARC is not going to tell you whether a system is already a GR or not. That's not its purpose. Arc is really a tool to direct the attention of the research community towards what we see as the most important unsolved bottlenecks on the way to AGI. So ARC is not the destination and solving ARC is not the goal. Arc is really just an arrow pointing in the right direction and ARC has completely resisted the pre-training scaling paradigm. Even after a 50,000x scale up of pre-trained baselons, their performance on ARC stayed near zero. So we can decisively conclude that fluid intelligence does not emerge from scaling up pre-training. You absolutely need test adaptation in order to demonstrate genuine fluid intelligence. And importantly when the arrival of test adaptation happened last year, ARC was really the only benchmark at the time that provided a clear signal about the profound shift that was happening. other benchmarks were saturated. So they could not distinguish between a true IQ increase and just brute force scaling. So now you you see this graph and you're probably asking well clearly at this point AR1 is also saturating. So does that mean we have human level AI now? Well not yet. What you see on this graph is that ARK1 was a binary test. It was a minimal reproduction of fluid intelligence. So it only really gives you two possible modes. Either you have no fluid intelligence in which case you will score near zero like basel or you have nonzero fluid intelligence in which case you will instantly score very high like the O3 model from open eye for instance. And of course every one of you in this room would score within noise distance of 100%. So ARC saturates ARK one saturates way below human level fluid intelligence. And so now we are in need of a better tool, a more sensitive tool that would provide more useful bandwidths and better comparison with human intelligence and that tool is ARGI 2 which released in March this year. So back in 2019, ARK1 was meant to challenge the deep learning pattern where models are big parametric curves uh used for static inference and today ARK 2 challenges reasoning systems. It changes the test adaptation pattern. The benchmark format is still the same. There's a much greater focus on probing compositional jarization. So the tasks are still very feasible for humans, but they're much more sophisticated. And as a result, ARK 2 is not easily brute forceable. In practice, what this means is that in ARK one, for many tasks, you could just look at it and instantly see the solution without having to think too much about it. With ARK 2, all tasks require some level of deliberate thinking, but they still remain very feasible for humans. And we know this because we tested 400 people firsthand in person in San Diego over several days. And we are not talking about people who have physics PhDs here. We recruited uh random folks uh Uber drivers, UCDS students, uh people who are unemployed. So basically anyone trying to make some money on the side and all tasks in AR 2 were sold by at least two of the people that saw it. And each task was seen on average by about seven people. And so what that tells you is that a group of 10 random people with majority voting would score 100% on ARK 2. So we know these tasks are completely doable by regular folks with no prior training. So how well do AI models do? Well, if you take basel models like GPT4.5, Lama 4, it's simple. They get 0%. There is simply no way to do these tasks simply via memorization. Next, if you look at static reasoning systems, so systems that use a single chin of thoughts that they generate for the task, they don't do much better. They do on the order of one to 2%. So very much within noise distance of zero. So what that tells you is that to solve AR 2, you really need test adaptation. All systems that do meaningfully above zero are using TTL, but even then they're still far below human level. So compared to ARK1, AR2 enables much more granular evaluation of DTS systems. Systems like 03 for instance. And that's where you see that 03 and other systems like it are still not yet quite human level. And in my view, as long as it's easy to come up with tasks that any one of you can do that are easy for humans, but that AI cannot figure out no matter how much computers are it, we don't have a GI yet. and you will know that we are close to having AGI when it becomes increasingly difficult to come up with such tasks. We're clearly not there yet. And to be clear, I don't think ARK 2 is the final test. We're not going to stop at ARC 2. We've started development on RKGI 3 and AR 3 is a significant departure from the input output pair formats of ARC one and two. We're assessing agency, the ability to explore, uh, to learn interactively, to set goals, uh, achieve goals autonomously. So, your AI is dropped into a brand new environment where it doesn't know what the controls do. It doesn't know what the goal is. It doesn't know where the the gameplay mechanics are, just to figure out everything on the fly, starting with what is it even supposed to do uh, uh, in the game. And every single game is entirely unique. They're all built on top of core knowledge prior only, just like in AR one and two. So we'll have hundreds of interactive reasoning tasks like this one. And efficiency is central to the design of AR 3. So models won't just be graded on whether they can solve a task, but on how efficiently they solve it. And we are establishing a strict limit of the number of actions that a model can take. And we are targeting the same level of action efficiency as we observe in human. So we're going to launch this in early 2026 and next month in July we're going to release a developer preview so you can start playing with it. What's it going to take to solve AR 2 and we're still very far from it today. Uh then solve AR 3 and we're even further away from that. Maybe in the future solve AR 4 eventually get to AGI. What are we still missing? So I've said that intelligence is the efficiency with which you operationalize the past to face a constantly changing future. But of course if the future you face had really nothing in common with the past, no common ground with anything you've seen before, you could not make sense of it no matter how intelligent you were. But here's the thing. Nothing is ever truly novel. The universe around you is made of many different things that are all similar to each other. Like one tree is similar to another tree is also similar to your neuron or electromagnetism is similar to hydrodnamics is also similar to gravity. So we are surrounded by isomorphisms. I call this the kaleidoscope hypothesis. Our experience of the world seems to feature a neverending novelty and complexity. But the number of unique atoms of meaning that you need to describe it is actually very small. And everything around you is a recombination of these atoms. And intelligence is the ability to mine your experience to identify these atoms of meaning that can be reused across many different situations, across many different tasks. And this involves identifying um invariance uh structure uh things that seem to be repeated principles. And these building blocks, these atoms are called abstractions. And whenever you encounter a new situation, you're going to make sense of it by recombining on the fly abstractions from your collection to create a brand new model that's adapted to the situation. So implementing intelligence is going to have two key parts. First, there's abstraction acquisition. You want to be able to efficiently extract reusable abstractions from your past experience, from a feed of data, for instance. And then there's on the-fly recombination. You want to be able to efficiently uh select and recombine these building blocks uh into models that are fit for the current situation. And the emphasis on efficiency here is crucial. How intelligent you are is not just determined by whether you can do something. It's determined by how efficiently you can acquire good abstractions from ret experience. how efficiently you can recombine them to navigate novelty. So if you need hundreds of thousands of hours to acquire a simple skill, uh you're not very intelligent. Or if you need to enumerate every single move on the chessboard to find the best move, you're not very intelligent. So intelligence is not just demonstrating high skill. It's really the efficiency with which you acquire and deploy these skills. It's both data efficiency and compute efficiency. And at this point, you start to see why simply making our AI models bigger and training them on more data didn't automatically lead to a GI. We were missing a couple of things. First, these models lacked the ability to do on the-fly recombination. So at training time, they were learning a lot. They were acquiring many useful abstractions, but then at test time, they were completely static. You could only use them to fetch and apply a pre-recorded template. And that is a critical problem that test adaptation is addressing. TTA adds on the re combination capabilities to our AI. And that's actually that's a huge step forward that gets us much much closer to a GI. That's not the only problem. Recombination is not the only thing missing. The other problem is that these models are still incredibly inefficient. If you take gradient descent for instance, gradient descent uh requires vast amounts of data to distill simple abstractions many orders of magnitude more data than what humans need roughly three to four orders of magnitude more. And if you look at uh uh re combination efficiency, even the latest state-of-the-art CTA techniques, they still need thousands of dollars of compute uh to solve ARK1 at human level. And that doesn't even scale to AR 2. And the fundamental issue here is that deep learning models are missing compositional generalization. And that's the thing that ARK 2 is trying to measure. And the reason why is that there's more than one kind of abstraction. And this is really important. I said that intelligence is about mining abstractions from data and then re combining them. There's really two kinds of abstraction. There's type one and type two. They're pretty similar to each other. They mirror each other. So both are about comparing things, comparing instances and merging individual instances into common templates by eliminating certain details about the instances. So basically you take a bunch of things, you compare them, you drop the details that don't matter and what you're left with is an abstraction and the key difference between the two is that one operates over a continuous domain and the other operates over a discrete domain. So type one or value centric abstraction is about comparing things via a continuous distance function and that's the kind of abstraction that's behind uh perception pattern cognition intuition and also of course modern machine learning and type two or programcentric abstraction is about comparing discrete programs which is to say graphs and instead of trying to compute distances between them you're going to be looking for uh exact structure matching You're going to be looking for exact isomorphisms, subgraph isomeorphisms. And this is what underlying much of human reasoning. It's also what software engineers do when they're refactoring some code. So if you hear a software engineer talk about abstraction, they mean this kind of abstraction. So two kinds of abstraction both driven by analogy making either value analogy or program analogy. And all cognition arises from a combination of these two forms of abstraction. You can remember them. They had left brain versus right brain metaphor. One half for perception, intuition, and the other half for reasoning, planning, uh rigor. And transformers are greats at type one abstraction. They can do everything that type one is effective for perception, intuition, pattern cognition, they all work well. So in that sense, transformers are major breakthrough in AI, but they're still not a good fit for type two. And this is why you will struggle to train one of these models to do very simple type two things like sorting a list or adding digits provided as a sequence of tokens. So how are we going to get to type two? You have to leverage discrete program search as opposed to purely manipulating continuous interpolated spaces learn with descent. Search is what unlocks invention beyond just automation. All known AI systems today that are capable of some kind of uh uh invention, some kind of creativity, they rely on discrete search. Uh even back in the 90s, we were already using gigantic search to come up with new antenna designs. Or you can take uh Alph Go with move 37 that was discrete search or more recently the alpha evol system from deep mind all discrete search systems. So deep learning doesn't invent but search does. So what's discrete program search? It's basically combinatoral search over graphs of operators taken from some language, some DSL. And to better understand it, you can try to draw an analogy between program synthesis and the machine learning techniques you already know about. In machine learning, your model is a differentiable parametric function. So it's a curve. In program synthesis, it's going to be a discrete graph, a graph of ops, symbolic ops from some language. In ML, your learning engine, the way you create models is gradient descent, which is very comput efficient. By the way, gradient descent will let you find a model that fits the data very quickly, very efficiently. In program synthesis, the learning engine is searchal search, which is extremely compute efficient. Obviously in machine learning the key obstacle that you run into is data density. In order to fit a model you need a dense sampling of the data manifold. You need a lot of data and program synthesis is the exact reverse. Program synthes is extremely data efficient. You can fit a program using only two or three examples. But in order to find that program you have to sift through a vast space of potential programs. And the size of that space grows cuminally with problem complexity. So you run into this communatoral explosion wall. I said earlier that intelligence is a combination of two forms abstraction. Type one and type two. And I really don't think that you're going to go very far if you go all in on just one of them. Like all in on type one or all in on type two. I think that if you want to really unlock their potential, you have to combine them together. And that's what human intelligence is really good at. That's really what makes us special. We combine perception and intuition together with explicit step-by-step reasoning. We combine both forms of abstraction in all our thoughts, all our actions everywhere. For instance, when you're playing chess, you're using type two. when you calculate when you unfold some potential moves step by step in your mind. But you're not going to do this for every possible move, of course, because there are too many of them, right? You're only going to be doing it for a couple of different options, right? Like here, you're going to look at the knight, the queen. And the way you narrow down these options is via intuition, is via pattern recognition on the board. So, and you build that up very much through experience, right? You've mined your past experience unconsciously to extract these patterns and that's very much type one. So you're using type one intuition to make type two calculation tractable. So how is the merger between type one and type two going to work? Well the key system two technique is discrete search over a space of program one and the blocker that you run into is explosion. And meanwhile the key system one technique is uh curve fitting and interpolation on the curve. So you take a lot of data, you embed it on some kind of interpolating manifold that enables fast but approximate judgment calls about the target space and the big idea is going to be to leverage these fast but approximate judgment calls to fight commit explosion and make program search tractable. A simple analogy to understand this would be drawing a map. So you take a space of discrete objects with discrete relationships that would normally require connectal search like path finding on a subway system for instance and you embed these objects uh into a latent space where you can use a continuous distance function to make fast but approximate guesses about these great relationships and this enables you to keep explosion in check while doing search and this is what the full picture looks like. This is the system that we are currently working on. AI is going to move towards systems that are more like programmers that approach a new task by writing software for it. And when faced with a new task, your programmer like metalarner will synthesize on the fly a program or model that is adapted to the task. And this program will blend uh deep learning subm modules for type one sub problems like perception for instance and algorithmic modules uh for type two sub problems. And these models are going to be assembled by a discrete program search system that is guided by deep learning based intuition about the structure of program space. And this search process isn't done from scratch. is going to leverage a global library of reusable building blocks of abstractions. And that library is constantly evolving as it's learning from incoming tasks. So when a new problem appears, the system is going to search through this library for relevant building blocks. Uh and whenever in the in the course of solving a new problem, you're synthesizing a new building block. You're going to be uploading it back to the library. Much like as a software engineer, if you develop a useful library for your own work, you're going to put it on GitHub. so that other people can reuse it. And the ultimate goal here is to have an AI that can face a completely new situation and it's going to use its rich abstraction library uh to quickly assemble a working model much like a human software engineer can quickly create a piece of software to solve a new problem by leveraging existing tools in libraries. And this AI is going to keep improving itself over time both by expanding its library of abstractions and also by refining its intuition about the structure of program space. This system is what you are building at India our new research lab. We started India because we believe that in order to dramatically accelerate scientific progress we need AI that's capable of independent invention and discovery. We need AI that could expand the frontiers of knowledge, not just uh operate within them. And we really believe that a new form of AI is going to be key to this acceleration. Deep learning is great at automation. It's incredibly powerful for automation, but scientific discovery requires something more. And our approach at Tendia is to leverage a deep learning guided uh program search to build this uh programmer like metalarner. And to test our progress, our first milestone is going to be to solve RKGI using a system that starts at knowing nothing at all about RKGI. And you ultimately want to leverage our system for science to empower human researchers and help accelerate the timeline of science.
+### 中文翻譯
+
+**François Chollet:** [00:00:01]
+大家好，我是 François。我非常興奮能和大家分享一些我關於 AGI（通用人工智慧）以及我們將如何實現它的想法。
+
+[00:00:11]
+那邊的這張圖表是關於這個世界最重要的事實之一。自 1940 年以來，運算成本每十年持續下降兩個數量級。沒有跡象表明它會很快停止。在 AI 領域，運算和數據長期以來一直是我們所能成就的主要瓶頸。
+
+**深度學習與大型語言模型的興起**
+
+[00:00:33]
+在 2010 年代，如大家所知，隨著基於 GPU 的運算和大型數據集的普及，深度學習真正開始發揮作用。突然之間，我們在那些長期以來似乎棘手的問題上取得了快速進展，涵蓋了電腦視覺和自然語言處理。特別是，自監督文本模型開始奏效。AI 的主導範式變成了擴展大型語言模型（LLM）的訓練。這種方法幾乎橫掃了所有基準測試。
+
+[00:01:06]
+值得注意的是，當我們用完全相同的架構和完全相同的訓練過程擴大模型大小和訓練數據大小時，它能可預測地獲得更好的基準測試結果。這就是 Jared 幾分鐘前告訴你們的擴展定律（scaling laws）。所以，這真的看起來像是我們已經完全搞懂了。許多人推斷，更大的規模就是解決一切並達到 AGI 所需的全部。我們的領域開始痴迷於這樣一個想法：只要把越來越多的數據塞進越來越大的模型裡，通用智慧就會自發地湧現。
+
+**基準測試的問題**
+
+[00:01:42]
+但有一個問題。我們對於這些基準測試的真正含義感到困惑。
+
+[00:01:49]
+記憶下來的技能（靜態且特定於任務）與流體通用智慧（即時理解你從未見過的事物的能力）之間有很大的區別。
+
+[00:02:02]
+早在 2019 年，在 LLM 興起之前，我發布了一個 AI 基準測試來突顯這種差異。它被稱為「抽象與推理語料庫」（Abstraction and Reasoning Corpus），簡稱 ARC。從那時起，從 2019 年到現在，以像 GPT-4.5 這樣的模型為例，基礎 LLM 的規模擴大了大約 50,000 倍。而我們在那個基準測試上的準確率從 0% 上升到大約 10%，這並不多。如果你考慮到在座的任何一個人都能得到 95% 以上的分數，這個數字就非常接近於零了。
+
+[00:02:38]
+要破解通用的流體智慧，事實證明我們需要超越僅僅擴展預訓練和進行靜態推論的新想法。這個基準測試不是關於複述記憶下來的技能。它真正考驗的是即時理解一個你從未見過的新問題的能力。
+
+**範式轉移：測試時適應**
+
+[00:03:01]
+但接著，去年，在 2024 年，一切都改變了。AI 研究社群開始轉向一個新的、非常不同的範式：測試時適應（test-time adaptation），即創造能夠在測試時改變自身狀態以適應新事物的模型。這不再是關於查詢預先加載的知識。它真正關乎的是在推論時學習和適應的能力。
+
+[00:03:27]
+突然之間，我們開始在 ARC 上看到顯著的進展。特別是去年 12 月，OpenAI 預覽了其 O3 模型，他們使用了一個專門為 ARC 微調的版本，該版本首次在該基準測試上展現了人類水平的表現。
+
+[00:03:45]
+今天，在 2025 年，我們突然從預訓練擴展的範式中走出來，現在完全進入了測試時適應的時代。測試時適應完全關乎模型根據其在推論期間遇到的特定數據動態修改自身行為的能力。這涵蓋了諸如測試時訓練、程式合成、思維鏈合成等技術，模型試圖為手頭的任務重新編寫自己的程式。今天，每一個在 ARC 上表現良好的 AI 方法都在使用這些技術之一。
+
+**關於 AGI 的關鍵問題**
+
+[00:04:23]
+今天，我想回答以下問題。首先，為什麼預訓練擴展的範式沒有帶我們走向 AGI？如果你回顧僅僅兩年前，這還是標準的教條。每個人都這麼說。而今天，幾乎沒有人再相信這一點了。那麼，發生了什麼？
+
+[00:04:41]
+接下來，這次測試時適應能帶我們走向 AGI 嗎？如果是這樣，也許 AGI 已經到來了。有些人是這麼認為的。
+
+[00:04:51]
+最後，除了測試時適應，AI 的下一步可能還有什麼？
+
+**定義智慧**
+
+[00:05:00]
+要回答這些問題，我們必須回到一個更根本的問題：智慧到底是什麼？當我們說我們正在努力建構 AGI 時，我們指的是什麼？
+
+[00:05:13]
+如果你回顧過去幾十年，有兩種思潮來定義智慧和 AI 的目標。一種是明斯基（Minsky）式的觀點：AI 是關於製造能夠執行通常由人類完成的任務的機器。這與當前主流的企業觀點非常吻合，即 AGI 將是一個能夠執行大多數具有經濟價值任務的模型。80% 這個數字經常被引用。
+
+[00:05:42]
+但還有麥卡錫（McCarthy）的觀點，即 AI 是關於讓機器處理它們從未準備過的問題。它是關於讓 AI 應對新事物。
+
+[00:05:54]
+我的觀點更像麥卡錫的觀點。智慧是一個過程，而技能是該過程的產出。所以技能本身不是智慧，在任何數量的任務上展示技能並不代表智慧。這就像一個道路網絡和一家築路公司的區別。如果你有一個道路網絡，那麼你可以從 A 到 B，但僅限於一組預先定義的 A 和 B。但如果你有一家築路公司，那麼你可以隨著需求的演變，即時連接新的 A 和新的 B。
+
+[00:06:28]
+所以智慧是應對新情況的能力。它是開闢新路徑和建造新道路的能力。將智慧歸因於實際上是一個固化的行為程式，一個技能程式，這是一個範疇錯誤。你混淆了過程和它的產出。所以不要混淆道路和創造道路的過程。
+
+**將智慧形式化**
+
+[00:06:54]
+為了稍微形式化這一點，我將智慧視為你所擁有的資訊（主要是你過去的經驗，但也包括開發者賦予系統的任何先驗知識）與你在可能遇到的未來潛在情況空間中的操作範圍之間的轉換率。而這個未來將具有高度的新穎性和不確定性。所以智慧是你為了應對未來而運用過去資訊的效率。它是一個效率比。
+
+[00:07:29]
+這就是為什麼使用類似考試的基準來評估 AI 模型是個壞主意。它們不會告訴我們離 AI 有多近，因為人類的考試並非為測量智慧而設計。它們是為測量特定任務的技能和知識而設計的。它們是根據對人類合理但對機器不合理的假設來設計的。例如，大多數考試都假設你沒有事先閱讀並記住所有的考題和答案。
+
+**測量智慧的關鍵概念**
+
+[00:08:01]
+如果你想嚴格定義和測量智慧，這裡有一些你必須考慮的關鍵概念。
+
+[00:08:09]
+首先是靜態技能和流體智慧之間的區別。也就是說，擁有一個解決已知問題的靜態程式集合，與能夠即時合成全新的程式來面對你從未見過的問題之間的區別。當然，這不是二元的。不是非此即彼。兩者之間存在一個光譜。
+
+[00:08:33]
+第二個概念是操作範圍。對於一項給定的技能，僅在與你以前見過的情況非常相似的情況下才熟練，與在一個非常廣泛的範圍內的任何情況下都熟練，這之間有很大的區別。例如，如果你會開車，你應該能在任何城市開車，而不僅僅是在一個特定的地理圍欄區域內。我可以在聖荷西學會開車，然後搬到沙加緬度，你仍然可以開車，對吧？同樣，這裡也有一個光譜。它不是二元的。
+
+[00:09:06]
+最後，你應該關注資訊效率。對於一項給定的技能，你需要多少資訊，多少數據，多少練習來獲得該技能？當然，更高的資訊效率意味著更高的智慧。
+
+[00:09:24]
+這些定義之所以重要，是因為作為工程師，我們只能建構我們所測量的東西。所以我們定義和測量智慧的方式不是一個技術細節。它真正反映了我們對認知問題的理解。它界定了我們將要問的問題，因此它決定了我們將要得到的答案。它是驅使我們走向目標的回饋信號。
+
+[00:09:51]
+你在工程中經常看到的一個現象是捷徑法則。也就是說，當你專注於達成單一的成功指標時…
+
+**衡量成功與目標設定的悖論**
+
+[00:10:02]
+…你可能會成功，但你會以犧牲所有未被你的指標捕捉到的其他東西為代價。所以你達到了目標，但你錯過了重點。你在 Kaggle 上經常看到這種情況。例如，我們在 Netflix 獎中看到了這一點，獲勝的系統極其準確，但它太複雜了，以至於從未在生產中使用過。所以它最終從未被使用。它實際上是沒有意義的。
+
+[00:10:30]
+我們在 AI 的西洋棋遊戲中也看到了這一點。AI 社群在 70 年代著手創造能夠下棋的程式，是因為人們期望它能教給我們關於人類智慧的知識。幾十年後，當深藍擊敗世界冠軍卡斯帕羅夫時，我們實現了這個目標。而在這個過程中，我們真的沒有學到任何關於智慧的東西。所以你達到了目標，但你錯過了重點。
+
+[00:10:58]
+幾十年來，AI 一直在追求特定任務的技能，因為那是我們對智慧的定義。但這個定義只會導致自動化，這正是我們今天擁有的那種系統。但我們實際上想要的是能夠自主發明的 AI。我們不想止步於自動化已知任務。我們想要能夠應對人類最困難挑戰並加速科學進步的 AI。這才是 AGI 的本意。為了實現這一點，我們需要一個新的目標。我們需要停止瞄準流體智慧本身，即適應和發明的能力。
+
+[00:11:38]
+所以，一種 AGI 的定義只解鎖了自動化。所以它提高了經濟生產力。顯然，這非常有價值。也許它也增加了失業率。但另一種定義解鎖了發明和科學時間線的加速。正是透過測量你真正關心的東西，我們才能取得進步。所以我們需要一個更好的目標。我們需要一個更好的回饋信號。
+
+**ARCGI 基準測試：一種新的智慧衡量標準**
+
+[00:12:08]
+那會是什麼樣子？我創建一種衡量 AI 系統智慧的方法的第一次嘗試是 ARCGI 基準測試。我在 2019 年發布了 ARC1。它就像一個針對機器和人類的智商測試。ARC1 包含 1000 個像這裡這樣的任務。每個任務都是獨一無二的。這意味著你不能為 ARC 臨時抱佛腳。你必須透過使用你的通用智慧而不是你記憶的知識，來即時解決每個任務。
+
+[00:12:41]
+當然，解決任何問題總是需要一些知識。在大多數基準測試的情況下，你需要的知識障礙通常是隱含的。在 ARC 的情況下，我們讓它們變得明確。所以所有的 ARC 任務都完全建立在核心知識障礙之上，這些東西比如物體性、基本物理學、基本幾何學、拓撲學、計數。也就是任何一個四歲小孩都已經掌握的概念。解決 ARC 需要的知識非常少，而且這些知識非常不專業。所以你不需要為了解決 ARC 而做準備。
+
+[00:13:19]
+ARC 的獨特之處在於，你不能純粹透過記憶模式來解決它。它真的要求你透過智慧來展示。與此同時，幾乎所有其他的基準測試都針對固定的、已知的任務。所以它們實際上可以僅僅透過記憶來解決或破解。這就是為什麼 ARC 對人類來說相當容易，但對 AI 來說卻非常具有挑戰性。當你看到像這樣一個問題，一個人類小孩可以表現得非常好，但最先進、最複雜的 AI 模型卻在掙扎，這就像一個巨大的紅色閃光燈，告訴你我們錯過了什麼，需要新的想法。
+
+[00:14:01]
+我希望你們記住的一件事是，ARC 不會告訴你一個系統是否已經是 AGI。那不是它的目的。ARC 真正是一個工具，用來引導研究社群的注意力，關注我們認為在通往 AGI 的道路上最重要的未解決瓶頸。所以 ARC 不是終點，解決 ARC 也不是目標。ARC 真正只是一個指向正確方向的箭頭。
+
+[00:14:30]
+ARC 完全抵抗了預訓練擴展的範式。即使在預訓練基礎警報擴大了 50,000 倍之後，ARC 的表現仍然接近於零。所以我們可以果斷地得出結論，流體智慧不會從擴展預訓練中產生。你絕對需要測試和適應，才能展示真正的流體智慧。重要的是，當去年測試和適應的到來時，ARC 是當時唯一一個對正在發生的深刻轉變提供清晰信號的基準測試。其他的基準測試已經飽和，所以它們無法區分真正的智商提高和僅僅是蠻力擴展。
+
+**從 ARC1 到 ARC2 的演進**
+
+[00:15:17]
+所以現在你看到這張圖，你可能會問，嗯，顯然在這一點上 ARC1 也正在飽和。那麼這是否意味著我們現在擁有了人類水平的 AI？嗯，還沒有。你在這張圖上看到的是，ARC1 是一個二元測試。它是流體智慧的最小再現。所以它只真正給你兩種可能的模式。要麼你沒有流體智慧，在這種情況下你會得到接近零的分數，就像貝葉斯演算法一樣；要麼你有非零的流體智慧，在這種情況下你會立刻得到非常高的分數，比如 OpenAI 的 O3 模型。當然，在座的每一位都會得到在 100% 的噪音距離內的分數。所以 ARC1 在遠低於人類水平的流體智慧時就飽和了。
+
+[00:16:04]
+所以現在我們需要一個更好的工具，一個更敏感的工具，能夠提供更有用的頻寬和與人類智慧更好的比較。那個工具就是今年三月發布的 ARCGI2。所以回到 2019 年，ARC1 是為了挑戰深度學習模式，其中模型是用於靜態推論的大型參數曲線。而今天，ARC2 挑戰的是推理系統。它挑戰的是測試適應模式。
+
+[00:16:36]
+基準測試的格式仍然相同。它更專注於探測組合泛化能力。所以任務對人類來說仍然非常可行，但它們要複雜得多。因此，ARC2 不容易被蠻力破解。在實踐中，這意味著在 ARC1 中，對於許多任務，你只要看一眼就能立刻看到解決方案，而不需要想太多。對於 ARC2，所有任務都需要一定程度的深思熟慮，但對人類來說仍然非常可行。
+
+[00:17:11]
+我們知道這一點，因為我們在聖地牙哥親自測試了 400 人，持續了幾天。我們這裡說的不是有物理學博士學位的人。我們招募了隨機的人，優步司機，UCDS 的學生，失業的人，基本上是任何想賺點外快的人。ARC2 中的所有任務都至少被另外兩個看到它的人解決了。每個任務平均被大約七個人看到。這告訴你，一個由 10 個隨機的人組成的群體，透過多數投票，會在 ARC2 上得到 100% 的分數。所以我們知道這些任務對於沒有經過事先訓練的普通人來說是完全可以做到的。
+
+**目前 AI 在 ARC2 上的表現**
+
+[00:17:56]
+那麼 AI 模型表現如何呢？嗯，如果你拿貝葉斯警報，像 GPT-4.5、LAMP4 這樣的模型，很簡單，它們得到 0%。根本沒有辦法僅僅透過記憶來完成這些任務。接下來，如果你看靜態推理系統，也就是使用它們為任務生成的單一任務鏈的系統，它們的表現也好不到哪裡去。它們的得分在 1% 到 2% 之間。所以非常接近於零的噪音距離。這告訴你，要解決 ARC2，你真的需要測試和適應。所有得分有意義地高於零的系統都在使用 TTL。但即使如此，它們仍然遠低於人類水平。
+
+[00:18:41]
+所以與 ARC1 相比，ARC2 能夠對 TTF 系統（例如 O3）進行更精細的評估。這就是你看到 O3 和其他類似系統仍然不完全是人類水平的地方。在我看來，只要還能輕易地想出你們任何人都能做，對人類來說很容易，但 AI 卻無法解決的任務，無論你投入多少運算力，我們就還沒有 AGI。當你發現越來越難想出這樣的任務時，你就會知道你離擁有 AGI 不遠了。我們還沒到那一步。
+
+**展望 ARC3**
+
+[00:19:21]
+要澄清的是，我不認為 ARC2 是最終的測試。我們不會止步於 ARC2。我們已經開始開發 ARCGI3。ARC3 與 ARC1 和 2 的輸入-輸出對格式有顯著的不同。我們正在評估代理能力（agency），即探索、互動式學習、設定目標、自主實現目標的能力。所以你的 AI 被投入一個全新的環境，它不知道控制器是做什麼的。它不知道
+
+[00:19:54]
+目標是什麼。它不知道遊戲機制是什麼。它必須即時弄清楚一切，從它在遊戲中應該做什麼開始。每個遊戲都完全是獨一無二的。它們都只建立在核心知識對之上，就像 ARC1 和 2 一樣。
+
+[00:20:13]
+所以我們將有數百個像這樣的互動式推理任務。效率是 ARC3 設計的核心。所以模型不僅僅會根據它們是否能解決任務來評分，還會根據它們解決任務的效率來評分。我們正在為模型可以採取的行動數量設定嚴格的限制。我們的目標是達到與我們在人類身上觀察到的相同水平的行動效率。
+
+[00:20:42]
+所以我們將在 2026 年初推出這個。下個月七月，我們將發布一個開發者預覽版，這樣你就可以開始玩了。解決 ARC2 需要什麼？我們今天離它還很遠。然後解決 ARC3。我們離那更遠。也許在未來，解決 ARC4，最終達到 AGI。
+
+**我們還缺少什麼？**
+
+[00:21:10]
+所以我說過，智慧是你為了面對一個不斷變化的未來而運用過去的效率。但當然，如果你面對的未來與過去真的沒有任何共同之處，與你以前見過的任何東西都沒有共同點，無論你多麼聰明，你都無法理解它。
+
+[00:21:31]
+但事情是這樣的。沒有什麼是真正全新的。你周圍的宇宙是由許多彼此相似的不同事物組成的，就像一棵樹與另一棵樹相似，也與一個神經元相似，或者電磁學與流體動力學相似，也與引力相似。所以我們被同構（isomorphisms）所包圍。
+
+**萬花筒假說**
+
+[00:21:56]
+我稱之為萬花筒假說。我們對世界的體驗似乎具有永無止境的新穎性和複雜性，但描述它所需的獨特意義原子的數量實際上非常小。你周圍的一切都是這些原子的重組。
+
+[00:22:17]
+而智慧是挖掘你的經驗以識別可以在許多不同情況、許多不同任務中重複使用的意義原子的能力。這涉及到識別不變量、結構、似乎是重複的原則。這些積木，這些原子，被稱為抽象。
+
+[00:22:41]
+每當你遇到一個新情況時，你會透過即時重組你收藏中的抽象來理解它，以創建一個適應當前情況的全新模型。
+
+**智慧的關鍵組成部分**
+
+[00:22:58]
+所以實現智慧將有兩個關鍵部分。首先，是抽象獲取。你希望能夠有效地從你過去的經驗中，例如從數據流中，提取可重複使用的抽象。然後是在飛行中重組。你希望能夠有效地選擇和重組這些積木，成為適合當前情況的模型。
+
+[00:23:25]
+這裡對效率的強調至關重要。你有多聰明不僅僅取決於你是否能做某件事，它取決於你從經驗中獲取良好抽象的效率，以及你重組它們以應對新奇事物的效率。
+
+[00:23:43]
+所以，如果你需要數十萬小時來獲得一個簡單的技能，你不是很聰明。或者如果你需要枚舉棋盤上的每一步來找到最佳走法，你不是很聰明。所以智慧不僅僅是展示高超的技能，它真正是你獲取和部署這些技能的效率。它既是數據效率，也是運算效率。
+
+**當前 AI 模型的局限性**
+
+[00:24:12]
+在這一點上，你開始明白為什麼僅僅讓我們的 AI 模型更大，並用更多數據訓練它們，並不會自動導致 AGI。我們缺少幾樣東西。
+
+[00:24:24]
+首先，這些模型缺乏即時重組的能力。所以在訓練時，它們學到了很多。它們獲得了許多有用的抽象，但接著在測試時，它們是完全靜態的。你只能用它們來獲取和應用一個預先錄製的範本。這是一個關鍵問題，而測試和適應正在解決這個問題。CTA 為我們的 AI 增加了即時重組的能力。這實際上是一個巨大的進步，讓我們離 AGI 近了很多很多。
+
+[00:24:58]
+那不是唯一的問題。重組不是唯一缺少的東西。另一個問題是這些模型仍然效率極低。如果你拿梯度下降為例，梯度下降需要大量的數據來提煉簡單的抽象，比人類需要的數據多好幾個數量級，大約多三到四個數量級。
+
+[00:25:23]
+如果你看重組效率，即使是最新的最先進的 CTA 技術，它們仍然需要數千美元的運算力才能在人類水平上解決 Arc1。而且那甚至無法擴展到 Arc2。
+
+**組合泛化**
+
+[00:25:41]
+這裡的根本問題是，深度學習模型缺少組合泛化能力。這就是 Arc2 試圖測量的東西。原因在於，抽象不止一種。這非常重要。
+
+[00:26:00]
+我說過，智慧是從數據中挖掘抽象，然後重組它們。抽象真的有兩種。有第一類和第二類。它們彼此非常相似。它們互為鏡像。
+
+[00:26:14]
+所以兩者都是關於比較事物，比較實例，並透過消除關於實例的某些細節，將單個實例合併為通用範本。所以基本上，你拿一堆東西，比較它們，去掉不重要的細節，剩下的就是一個抽象。
+
+**兩種抽象類型**
+
+[00:26:36]
+兩者之間的關鍵區別在於，一個在連續域上操作，另一個在離散域上操作。所以第一類，或以價值為中心的抽象，是關於透過連續的距離函數來比較事物。這就是感知、模式識別、直覺背後的抽象類型，當然，也是現代機器學習背後的抽象類型。
+
+[00:27:01]
+而第二類，或以程式為中心的抽象，是關於比較離散的程式，也就是圖。你不是試圖計算它們之間的距離，而是要尋找精確的結構匹配。你要尋找精確的同構，子圖同構。這就是人類大部分推理的基礎。這也是軟體工程師在重構一些程式碼時所做的事情。所以如果你聽到一個軟體工程師談論抽象，他們指的是這種抽象。
+
+[00:27:34]
+所以有兩種抽象，都由類比驅動，要麼是價值類比，要麼是程式類比，所有的認知都源於這兩種抽象形式的結合。你可以把它們記為左腦與右腦的比喻，一半用於感知、直覺，另一半用於推理、規劃、嚴謹。
+
+[00:27:58]
+而 Transformer 在第一類抽象上非常出色。它們可以做所有第一類有效的事情。感知、直覺、模式識別，它們都運作得很好。所以在那個意義上，Transformer 是 AI 的一個重大突破，但它們仍然不適合第二類。這就是為什麼你會很難訓練這些模型之一去做非常簡單的第二類事情，比如排序一個列表，或者將作為 token 序列提供的數字相加。
+
+**離散程式搜尋**
+
+[00:28:32]
+那麼我們將如何達到第二類呢？你必須利用離散程式搜尋，而不是純粹地操作用梯度下降學習到的連續內插空間。搜尋是解鎖超越僅僅是自動化的發明的關鍵。
+
+[00:28:50]
+今天所有已知的能夠進行某種發明、某種創造力的 AI 系統，都依賴於離散搜尋。甚至早在 90 年代，我們就已經在使用遺傳搜尋來想出新的網路設計。或者你可以拿 AlphaGo 的第 37 手棋。那是離散搜尋。或者更近的，來自 DeepMind 的 AlphaEvolve 系統，都是離散搜尋系統。所以深度學習不會發明，但搜尋會。
+
+[00:29:20]
+那麼什麼是離散程式搜尋？它基本上是在取自某種語言、某種 DSM 的運算子圖上進行的交換搜尋。為了更好地理解它，你可以試著將程式合成與你已經知道的機器學習技術進行類比。
+
+[00:29:39]
+在機器學習中，你的模型是一個可微的參數函數。所以它是一條曲線。在程式合成中，它將是一個離散的圖，一個由來自某種語言的符號運算子組成的圖。在機器學習中，你的學習引擎，你創建模型的方式是梯度下降，順便說一句，這非常需要計算。梯度下降會讓你非常快速、非常有效地找到一個擬合數據的模型。
+
+[00:30:07]
+在程式合成中，學習引擎是搜尋，是交換搜尋，這顯然在計算上效率極低。在機器學習中，你遇到的關鍵障礙是數據密度。為了擬合一個模型，你需要數據流形的密集採樣。你需要大量的數據。而程式合成則完全相反。程式合成在
+
+[00:30:33]
+數據上效率極高。你只用兩三個例子就能擬合一個程式。但為了找到那個程式，你必須篩選一個巨大的潛在程式空間。而那個空間的大小隨著問題的複雜性呈組合式增長。你會遇到這個組合爆炸的牆。
+
+[00:30:54]
+我早些時候說過，智慧是兩種抽象形式的結合。第一類和第二類。我真的不認為如果你只全力投入其中一種，比如全力投入第一類或全力投入第二類，你能走得很遠。我認為如果你想真正釋放它們的潛力，你必須把它們結合起來。這就是人類智慧真正擅長的地方。這才是真正讓我們與眾不同的地方。我們將感知和直覺與明確的、一步一步的推理結合起來。我們在我們所有的思想、所有的行動、所有地方都結合了這兩種抽象形式。
+
+[00:31:33]
+例如，當你下棋時，你在計算時使用第二類，當你在腦海中一步一步地展開一些潛在的走法時，但你當然不會對所有可能的走法都這樣做，因為它們太多了。你只會對幾種不同的選擇這樣做。比如在這裡，你會看馬、后，而你縮小這些選擇的方式是透過直覺，透過棋盤上的模式識別，而你很大程度上是透過經驗建立起來的。你無意識地挖掘了你過去的經驗來提取這些模式，那很大程度上是第一類。所以你用第一類的直覺來讓第二類的計算變得可行。
+
+**融合第一類與第二類系統**
+
+[00:32:20]
+那麼第一類和第二類之間的融合將如何運作？嗯，關鍵的系統二技術是在程式空間上的離散搜尋，而你遇到的障礙是組合爆炸。與此同時，關鍵的系統一技術是曲線擬合和曲線上的內插。所以你拿大量的數據，把它們嵌入到某種內插流形上，這使得能夠對目標空間做出快速但近似的判斷。而大的想法將是利用這些快速但近似的判斷來對抗組合爆炸，並使程式搜尋變得可行。
+
+[00:32:59]
+一個簡單的類比來理解這一點是畫地圖。所以你拿一個具有離散關係的離散物體空間，通常需要組合搜尋，比如在地鐵系統上尋找路徑，然後你把這些物體嵌入到一個潛在空間中，在那裡你可以使用連續的距離函數來對離散關係做出快速但近似的猜測。這使你在進行搜尋時能夠控制組合爆炸。
+
+**一個新的 AI 架構**
+
+[00:33:29]
+這就是全貌。這就是我們目前正在努力的系統。AI 將朝著更像程式設計師的系統發展，他們透過為新任務編寫軟體來處理新任務。當面對一個新任務時，你那像程式設計師一樣的元學習器將即時合成一個適應該任務的程式或模型。這個程式將融合用於第一類子問題（如感知）的深度學習子模組，和用於第二類子問題的演算法模組。
+
+[00:34:03]
+這些模型將由一個離散程式搜尋系統組裝，該系統由基於深度學習的、關於程式空間結構的直覺來引導。這個搜尋過程不是從零開始的。它將利用一個可重複使用的積木、抽象的全域庫。隨著它從傳入的任務中學習，那個庫會不斷演進。
+
+[00:34:27]
+所以當一個新問題出現時，系統將會搜尋這個庫以尋找相關的積木。每當在解決一個新問題的過程中，你合成了一個新的積木，你將會把它上傳回庫中，就像一個軟體工程師，如果你為自己的工作開發了一個有用的庫，你會把它放到 GitHub 上，這樣其他人就可以重複使用它。
+
+**AI 與科學發現的未來**
+
+[00:34:54]
+這裡的最終目標是擁有一個能夠面對全新情況的 AI，它將利用其豐富的抽象庫快速組裝一個可行的模型，就像一個人類軟體工程師可以透過利用現有工具、現有庫，快速創建一個軟體來解決一個新問題一樣。這個 AI 將會隨著時間的推移不斷自我完善，既透過擴展其抽象庫，也透過提煉其對程式空間結構的直覺。
+
+[00:35:26]
+這個系統就是我們在 NDI，我們的新研究實驗室，正在建構的。我們創辦 NDI 是因為我們相信，為了極大地加速科學進步，我們需要能夠獨立發明和發現的 AI。我們需要能夠擴展知識前沿，而不僅僅是在其中運作的 AI。我們真的相信，一種新形式的 AI 將是這次加速的關鍵。
+
+[00:35:53]
+深度學習在自動化方面非常出色，它在自動化方面非常強大，但科學發現需要更多的東西。我們在 NDI 的方法是利用深度學習引導的程式搜尋來建構這個像程式設計師一樣的元學習器，並測試我們的進展。我們的第一個里程碑將是解決 RKGI，使用一個一開始對 RKGI 一無所知的系統。我們最終希望利用我們的系統為科學服務，賦予人類研究人員力量，並幫助加速科學的時間線。
