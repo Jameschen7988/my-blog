@@ -1,1 +1,6 @@
-.vercel
+.DS_Store
+/.cache/
+/.codex-tmp/
+/.vercel/
+*.env.local
+*.env.development.local
