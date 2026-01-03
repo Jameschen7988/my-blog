@@ -28,6 +28,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from datetime import datetime
 from dataclasses import dataclass
 from pathlib import Path
@@ -37,6 +38,48 @@ ROOT = Path(__file__).resolve().parent.parent
 POSTS_JSON = ROOT / "public" / "posts" / "posts.json"
 POSTS_DIR = ROOT / "public" / "posts"
 CACHE_DIR = ROOT / ".cache" / "ai_startup_school"
+
+TRANSLATION_EDITOR_PROMPT = """你是一位具有 20 年以上經驗的專業翻譯與內容編輯，
+長期從事【知識型文章、深度分析、專訪與評論】的中英翻譯與在地化改寫。
+
+你的任務不是逐字翻譯，而是將原文轉換為：
+「適合台灣繁體中文讀者閱讀、可直接刊登於知識型網站的成熟內容」。
+
+請嚴格遵守以下規範：
+
+【一、內容定位與讀者】
+- 內容類型：知識型 / 深度內容（非新聞快訊、非口語字幕）
+- 目標讀者：具閱讀能力的一般讀者，重視理解與邏輯，而非娛樂性
+- 發布情境：文章頁面（長文、段落清楚，可反覆閱讀）
+
+【二、翻譯核心原則】
+- 以「意義、邏輯與可讀性」優先於原文句型
+- 允許重組語序、拆分或合併句子
+- 必須消除英文句法直接映射到中文的翻譯痕跡
+- 中文閱讀時應感覺自然、成熟，而非「翻譯作品」
+
+【三、語言與風格要求（台灣繁中）】
+- 使用台灣常見且中性的繁體中文
+- 避免中國用語（例如：赋能、抓手、落地、闭环、赋值）
+- 避免過度口語、網路語或情緒化表述
+- 語氣理性、穩定、清楚，不煽情、不說教
+
+【四、允許的專業編輯行為】
+- 將口語英文轉為自然的書面中文
+- 補出中文理解所需但原文省略的主詞或邏輯連接
+- 壓縮重複或空泛的表述，使段落更精煉
+- 在不改變原意的前提下，使段落邏輯更清楚
+
+【五、嚴格禁止事項】
+- 不可新增原文未提及的觀點、評論或背景
+- 不可自行下結論、延伸或評價作者立場
+- 不可使用行銷文案或宣傳式語言
+- 不可留下逐字對應、直譯痕跡或翻譯腔
+
+【六、輸出格式】
+- 僅輸出最終優化後的繁體中文內容
+- 不附加任何說明、註解、分析或對照
+"""
 
 TIMESTAMP_PATTERN = re.compile(r"^(\d{2}):(\d{2}):(\d{2})(?:\.(\d{3}))?$")
 SPEAKER_PATTERN = re.compile(r"^([A-Z][\w .'-]{0,60}?)(?:\s*[\-–—])?\s*:\s*(.*)")
@@ -363,51 +406,65 @@ def translate_batch(texts: List[str]) -> List[str]:
         
         # Optimization: If only one segment, translate directly to avoid formatting issues
         if len(batch) == 1:
-            try:
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": "You are a professional translator. Translate the following text to Traditional Chinese (Taiwan). Return ONLY the translated text, no other commentary."},
-                        {"role": "user", "content": batch[0]}
-                    ]
-                )
-                translated.append(response.choices[0].message.content.strip())
-            except Exception as e:
-                if "insufficient_quota" in str(e):
-                    sys.exit(f"❌ Critical Error: OpenAI API quota exceeded during batch translation. Script aborted.")
-                print(f"Translation failed: {e}", file=sys.stderr)
-                translated.append(batch[0])
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[
+                            {"role": "system", "content": "You are a professional translator. Translate the following text to Traditional Chinese (Taiwan). Return ONLY the translated text, no other commentary."},
+                            {"role": "user", "content": batch[0]}
+                        ]
+                    )
+                    translated.append(response.choices[0].message.content.strip())
+                    break # Success
+                except Exception as e:
+                    if "insufficient_quota" in str(e):
+                        sys.exit(f"❌ Critical Error: OpenAI API quota exceeded during batch translation. Script aborted.")
+                    if attempt < max_retries - 1:
+                        print(f"Translation failed (attempt {attempt+1}/{max_retries}): {e}. Retrying...", file=sys.stderr)
+                        time.sleep(2)
+                    else:
+                        print(f"Translation failed after {max_retries} attempts: {e}", file=sys.stderr)
+                        translated.append(batch[0])
             continue
 
         # Use a delimiter to separate segments in the prompt
         prompt_text = "\n".join(f"SEGMENT_{idx}: {text}" for idx, text in enumerate(batch))
         
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a professional translator. Translate the following text segments to Traditional Chinese (Taiwan). Maintain the format 'SEGMENT_index: translated_text'."},
-                    {"role": "user", "content": prompt_text}
-                ]
-            )
-            content = response.choices[0].message.content.strip()
-            
-            # Parse the response back into a list
-            batch_map = {}
-            for line in content.splitlines():
-                match = re.match(r"SEGMENT_(\d+):\s*(.*)", line)
-                if match:
-                    batch_map[int(match.group(1))] = match.group(2)
-            
-            # Reconstruct batch, falling back to original if translation missing
-            for idx in range(len(batch)):
-                translated.append(batch_map.get(idx, batch[idx]))
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a professional translator. Translate the following text to Traditional Chinese (Taiwan). Maintain the format 'SEGMENT_index: translated_text'."},
+                        {"role": "user", "content": prompt_text}
+                    ]
+                )
+                content = response.choices[0].message.content.strip()
                 
-        except Exception as e:
-            if "insufficient_quota" in str(e):
-                sys.exit(f"❌ Critical Error: OpenAI API quota exceeded during batch translation. Script aborted.")
-            print(f"Batch translation failed: {e}", file=sys.stderr)
-            translated.extend(batch)
+                # Parse the response back into a list
+                batch_map = {}
+                for line in content.splitlines():
+                    match = re.match(r"SEGMENT_(\d+):\s*(.*)", line)
+                    if match:
+                        batch_map[int(match.group(1))] = match.group(2)
+                
+                # Reconstruct batch, falling back to original if translation missing
+                for idx in range(len(batch)):
+                    translated.append(batch_map.get(idx, batch[idx]))
+                break # Success
+            except Exception as e:
+                if "insufficient_quota" in str(e):
+                    sys.exit(f"❌ Critical Error: OpenAI API quota exceeded during batch translation. Script aborted.")
+                
+                if attempt < max_retries - 1:
+                    print(f"Batch translation failed (attempt {attempt+1}/{max_retries}): {e}. Retrying...", file=sys.stderr)
+                    time.sleep(2)
+                else:
+                    print(f"Batch translation failed after {max_retries} attempts: {e}", file=sys.stderr)
+                    translated.extend(batch)
             
     return translated
 
