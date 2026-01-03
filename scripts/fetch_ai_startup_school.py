@@ -23,10 +23,12 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
+from datetime import datetime
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List, Optional
@@ -39,6 +41,11 @@ CACHE_DIR = ROOT / ".cache" / "ai_startup_school"
 TIMESTAMP_PATTERN = re.compile(r"^(\d{2}):(\d{2}):(\d{2})(?:\.(\d{3}))?$")
 SPEAKER_PATTERN = re.compile(r"^([A-Z][\w .'-]{0,60}?)(?:\s*[\-–—])?\s*:\s*(.*)")
 NOISE_PATTERN = re.compile(r"^\[.*?\]$")
+
+
+def has_chinese_chars(text: str) -> bool:
+    """Check if the text contains Traditional/Simplified Chinese characters."""
+    return bool(re.search(r"[\u4e00-\u9fff]", text))
 
 
 @dataclass
@@ -57,6 +64,7 @@ class Segment:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Download AI Startup School subtitles and format Markdown posts")
     parser.add_argument("--slug", action="append", help="Only process the given slug(s). Can be repeated.")
+    parser.add_argument("--crawl-playlist", help="YouTube Playlist URL to crawl for new videos and update posts.json")
     parser.add_argument("--skip-download", action="store_true", help="Assume subtitles already exist in the cache and only reformat the Markdown")
     parser.add_argument("--force", action="store_true", help="Overwrite existing post content without prompting")
     parser.add_argument("--dry-run", action="store_true", help="Print the generated Markdown instead of writing the post file")
@@ -93,12 +101,14 @@ def format_timestamp(seconds: float) -> str:
 
 def download_subtitles(yt_dlp: str, url: str, destination: Path) -> Path:
     destination.mkdir(parents=True, exist_ok=True)
+    
+    # 1. Try downloading Chinese subtitles first
     cmd = [
         yt_dlp,
         "--write-auto-subs",
         "--skip-download",
         "--sub-lang",
-        "en",
+        "zh-Hant,zh-TW,zh",
         "--sub-format",
         "vtt",
         "--no-overwrites",
@@ -111,13 +121,25 @@ def download_subtitles(yt_dlp: str, url: str, destination: Path) -> Path:
     except FileNotFoundError:
         sys.exit(f"yt-dlp not found (looked for '{yt_dlp}'). Install it or pass --yt-dlp with the correct path.")
     except subprocess.CalledProcessError as exc:
-        sys.stderr.write(exc.stdout)
+        # Don't exit yet, we will try English
+        pass
+
+    for path in destination.glob("*.zh*.vtt"):
+        return path
+    
+    # 2. Fallback: Try downloading English subtitles
+    print(f"Chinese subtitles not found for {url}, trying English fallback...", file=sys.stderr)
+    cmd[4] = "en"  # Change --sub-lang to en
+    try:
+        subprocess.run(cmd, cwd=destination, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as exc:
         sys.stderr.write(exc.stderr)
-        raise SystemExit(f"yt-dlp failed for {url} (exit code {exc.returncode}).")
+        raise RuntimeError(f"yt-dlp failed for {url} (exit code {exc.returncode}).")
 
     for path in destination.glob("*.en.vtt"):
         return path
-    raise SystemExit(f"No English auto subtitle (.en.vtt) found in {destination} after running yt-dlp.")
+        
+    raise RuntimeError(f"No subtitles found for {url}. Ensure the video has captions.")
 
 
 def parse_vtt(path: Path) -> List[Cue]:
@@ -291,12 +313,93 @@ def read_existing_summary(path: Path) -> str:
     match = re.search(r"<!-- summary -->(.*?)<!-- endsummary -->", content, flags=re.DOTALL)
     if match:
         summary = match.group(1).strip()
-        if summary:
+        if summary and has_chinese_chars(summary):
             return summary
     return "這支影片的重點摘要待補充。"
 
 
+def generate_ai_summary(text_content: str) -> str:
+    """Generate a summary using OpenAI if available."""
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return "這支影片的重點摘要待補充。（請設定 OPENAI_API_KEY 以自動生成）"
+    
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key)
+        
+        # Take the first ~4000 chars to generate a summary to save tokens/time
+        prompt = f"請根據以下逐字稿內容，生成一段約 3-5 點的繁體中文重點摘要，並在開頭包含一段簡短的總結。格式請參考：\n\n總結...\n\n重點：\n1. ...\n\n逐字稿：\n{text_content[:4000]}"
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        if "insufficient_quota" in str(e):
+            sys.exit(f"❌ Critical Error: OpenAI API quota exceeded. Script aborted to prevent overwriting with English content.\nPlease check billing at https://platform.openai.com/settings/organization/billing/overview")
+        print(f"Failed to generate summary: {e}", file=sys.stderr)
+        return "這支影片的重點摘要待補充。（生成失敗）"
+
+
+def translate_batch(texts: List[str]) -> List[str]:
+    """Translate a list of strings to Traditional Chinese using OpenAI efficiently."""
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return texts
+    
+    from openai import OpenAI
+    client = OpenAI(api_key=api_key)
+    
+    translated = []
+    # Batch size to balance context window and speed
+    batch_size = 20
+    
+    print(f"Translating {len(texts)} segments...", file=sys.stderr)
+    for i in range(0, len(texts), batch_size):
+        batch = texts[i:i+batch_size]
+        # Use a delimiter to separate segments in the prompt
+        prompt_text = "\n".join(f"SEGMENT_{idx}: {text}" for idx, text in enumerate(batch))
+        
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a professional translator. Translate the following text segments to Traditional Chinese (Taiwan). Maintain the format 'SEGMENT_index: translated_text'."},
+                    {"role": "user", "content": prompt_text}
+                ]
+            )
+            content = response.choices[0].message.content.strip()
+            
+            # Parse the response back into a list
+            batch_map = {}
+            for line in content.splitlines():
+                match = re.match(r"SEGMENT_(\d+):\s*(.*)", line)
+                if match:
+                    batch_map[int(match.group(1))] = match.group(2)
+            
+            # Reconstruct batch, falling back to original if translation missing
+            for idx in range(len(batch)):
+                translated.append(batch_map.get(idx, batch[idx]))
+                
+        except Exception as e:
+            if "insufficient_quota" in str(e):
+                sys.exit(f"❌ Critical Error: OpenAI API quota exceeded during batch translation. Script aborted.")
+            print(f"Batch translation failed: {e}", file=sys.stderr)
+            translated.extend(batch)
+            
+    return translated
+
+
 def build_markdown(entry: dict, segments: List[Segment], existing_summary: str, fallback_speaker: Optional[str]) -> str:
+    if "待補充" in existing_summary:
+        # Combine segments to form text for summarization
+        full_text = " ".join([s.text for s in segments])
+        if full_text and os.environ.get("OPENAI_API_KEY"):
+            print(f"Generating AI summary for {entry.get('slug')}...")
+            existing_summary = generate_ai_summary(full_text)
+
     parts: List[str] = []
     parts.append("<!-- summary -->")
     parts.append(existing_summary.strip())
@@ -358,9 +461,128 @@ def infer_primary_speaker(entry: dict) -> Optional[str]:
     return None
 
 
+def slugify(text: str) -> str:
+    """Convert a string to a URL-friendly slug."""
+    text = text.lower()
+    text = re.sub(r'[^\w\s-]', '', text)
+    text = re.sub(r'[-\s]+', '-', text).strip('-_')
+    return text
+
+
+def translate_to_chinese(text: str) -> str:
+    """Translate text to Traditional Chinese using OpenAI."""
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return text
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key)
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a professional translator. Translate the following text to Traditional Chinese (Taiwan). Keep the tone professional."},
+                {"role": "user", "content": text}
+            ]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        if "insufficient_quota" in str(e):
+            sys.exit(f"❌ Critical Error: OpenAI API quota exceeded. Script aborted.")
+        print(f"Translation failed: {e}", file=sys.stderr)
+        return text
+
+
+def crawl_playlist(yt_dlp: str, playlist_url: str) -> None:
+    """Fetch video metadata from a YouTube playlist and update posts.json."""
+    print(f"Crawling playlist: {playlist_url}...")
+    
+    # Fetch playlist metadata using yt-dlp
+    cmd = [
+        yt_dlp,
+        "--dump-single-json",
+        "--flat-playlist",
+        playlist_url,
+    ]
+    try:
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        playlist_data = json.loads(result.stdout)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as e:
+        sys.exit(f"Failed to crawl playlist: {e}")
+
+    if not POSTS_JSON.exists():
+        current_posts = []
+    else:
+        with POSTS_JSON.open("r", encoding="utf-8") as fh:
+            current_posts = json.load(fh)
+
+    existing_urls = {p.get("cover") for p in current_posts if p.get("cover")}
+    existing_slugs = {p.get("slug") for p in current_posts if p.get("slug")}
+    
+    new_entries = []
+    for entry in playlist_data.get("entries", []):
+        video_id = entry.get("id")
+        title = entry.get("title")
+        if not video_id or not title:
+            continue
+            
+        url = f"https://www.youtube.com/watch?v={video_id}"
+        
+        # Check if existing entry needs translation (if title has no Chinese)
+        if url in existing_urls:
+            for post in current_posts:
+                if post.get("cover") == url and not has_chinese_chars(post.get("title", "")):
+                    print(f"Updating English title for: {title}")
+                    zh_title = "YC AI Startup School: " + translate_to_chinese(title)
+                    post["title"] = zh_title
+                    post["excerpt"] = zh_title
+            continue
+
+        slug = slugify(title)
+        if slug in existing_slugs:
+            # Handle duplicate slugs by appending id
+            slug = f"{slug}-{video_id}"
+        
+        print(f"Found new video: {title}")
+        
+        # Translate title
+        zh_title = "YC AI Startup School: " + translate_to_chinese(title)
+        
+        new_post = {
+            "slug": slug,
+            "title": zh_title,
+            "date": datetime.today().strftime('%Y-%m-%d'),
+            "tags": ["AI Startup School", "Y Combinator"],
+            "excerpt": zh_title,  # Default excerpt
+            "cover": url,      # Using YouTube URL as cover source
+            "url": url
+        }
+        new_entries.append(new_post)
+        existing_urls.add(url)
+        existing_slugs.add(slug)
+
+    if new_entries:
+        # Append new entries to the beginning or end? Usually new posts at top.
+        # But category.js sorts by date, so order in JSON matters less, but let's prepend.
+        updated_posts = new_entries + current_posts
+        with POSTS_JSON.open("w", encoding="utf-8") as fh:
+            json.dump(updated_posts, fh, indent=2, ensure_ascii=False)
+        print(f"Added {len(new_entries)} new posts to posts.json.")
+    else:
+        # Even if no new entries, we might have updated titles of existing posts
+        with POSTS_JSON.open("w", encoding="utf-8") as fh:
+            json.dump(current_posts, fh, indent=2, ensure_ascii=False)
+        print("Checked and updated existing posts in posts.json.")
+
+
 def main() -> None:
     args = parse_args()
     ensure_cache_dir(args.cache_dir)
+
+    if args.crawl_playlist:
+        crawl_playlist(args.yt_dlp, args.crawl_playlist)
+        # Reload posts after crawling to process them immediately if needed
+        print("Reloading posts list...")
+
     posts = load_posts()
 
     target_slugs: Iterable[str]
@@ -373,29 +595,43 @@ def main() -> None:
         target_slugs = sorted(posts.keys())
 
     for slug in target_slugs:
-        entry = posts[slug]
-        url = entry.get("cover") or entry.get("url")
-        if not url:
-            print(f"Skipping {slug}: no video URL found", file=sys.stderr)
-            continue
-        cache_bucket = args.cache_dir / slug
-        if args.skip_download:
-            candidates = sorted(cache_bucket.glob("*.en.vtt"))
-            if not candidates:
-                print(f"No cached subtitles for {slug}; run without --skip-download first.", file=sys.stderr)
+        try:
+            entry = posts[slug]
+            url = entry.get("cover") or entry.get("url")
+            if not url:
+                print(f"Skipping {slug}: no video URL found", file=sys.stderr)
                 continue
-            vtt_path = candidates[-1]
-        else:
-            vtt_path = download_subtitles(args.yt_dlp, url, cache_bucket)
-        cues = parse_vtt(vtt_path)
-        segments = cues_to_segments(cues)
-        if not segments:
-            print(f"No transcript segments produced for {slug}; skipping.", file=sys.stderr)
+            cache_bucket = args.cache_dir / slug
+            if args.skip_download:
+                candidates = sorted(cache_bucket.glob("*.zh-Hant.vtt"))
+                if not candidates:
+                    print(f"No cached subtitles for {slug}; run without --skip-download first.", file=sys.stderr)
+                    continue
+                vtt_path = candidates[-1]
+            else:
+                vtt_path = download_subtitles(args.yt_dlp, url, cache_bucket)
+            cues = parse_vtt(vtt_path)
+            segments = cues_to_segments(cues)
+            if not segments:
+                print(f"No transcript segments produced for {slug}; skipping.", file=sys.stderr)
+                continue
+                
+            # Check if transcript is English and needs translation
+            full_text_sample = " ".join([s.text for s in segments[:20]])
+            if full_text_sample and not has_chinese_chars(full_text_sample):
+                print(f"Detected English transcript for {slug}. Translating to Chinese...", file=sys.stderr)
+                texts = [s.text for s in segments]
+                translated_texts = translate_batch(texts)
+                for i, s in enumerate(segments):
+                    s.text = translated_texts[i]
+
+            summary = read_existing_summary(POSTS_DIR / f"{slug}.md")
+            primary_speaker = infer_primary_speaker(entry)
+            markdown = build_markdown(entry, segments, summary, primary_speaker)
+            write_post(slug, markdown, force=args.force, dry_run=args.dry_run)
+        except Exception as e:
+            print(f"Error processing {slug}: {e}", file=sys.stderr)
             continue
-        summary = read_existing_summary(POSTS_DIR / f"{slug}.md")
-        primary_speaker = infer_primary_speaker(entry)
-        markdown = build_markdown(entry, segments, summary, primary_speaker)
-        write_post(slug, markdown, force=args.force, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":
