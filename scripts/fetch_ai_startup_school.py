@@ -205,7 +205,7 @@ def cues_to_segments(cues: Iterable[Cue]) -> List[Segment]:
         remaining = normalize_sentence(remaining)
         if not remaining:
             continue
-        if segments and segments[-1].speaker == speaker:
+        if segments and segments[-1].speaker == speaker and len(segments[-1].text) < 2500:
             previous = segments[-1]
             merged = merge_segment_text(previous.text, remaining)
             if merged == previous.text:
@@ -358,7 +358,27 @@ def translate_batch(texts: List[str]) -> List[str]:
     
     print(f"Translating {len(texts)} segments...", file=sys.stderr)
     for i in range(0, len(texts), batch_size):
+        print(f"  Batch {i//batch_size + 1}/{(len(texts)-1)//batch_size + 1}...", file=sys.stderr)
         batch = texts[i:i+batch_size]
+        
+        # Optimization: If only one segment, translate directly to avoid formatting issues
+        if len(batch) == 1:
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a professional translator. Translate the following text to Traditional Chinese (Taiwan). Return ONLY the translated text, no other commentary."},
+                        {"role": "user", "content": batch[0]}
+                    ]
+                )
+                translated.append(response.choices[0].message.content.strip())
+            except Exception as e:
+                if "insufficient_quota" in str(e):
+                    sys.exit(f"❌ Critical Error: OpenAI API quota exceeded during batch translation. Script aborted.")
+                print(f"Translation failed: {e}", file=sys.stderr)
+                translated.append(batch[0])
+            continue
+
         # Use a delimiter to separate segments in the prompt
         prompt_text = "\n".join(f"SEGMENT_{idx}: {text}" for idx, text in enumerate(batch))
         
